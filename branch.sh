@@ -7,6 +7,7 @@ echo $MESSAGE
 
 git add .
 git commit -m "$MESSAGE"
+git push
 git branch $BRANCH
 git checkout $BRANCH
 git push -u origin $BRANCH
