@@ -11,12 +11,15 @@ import {
 } from 'react-native';
 import Card from '../components/Card';
 import Input from '../components/Input';
+import NumberContainer from '../components/NumberContainer';
 
 import Colors from '../constants/colors';
 
-interface StartGameScreenProps {}
+interface StartGameScreenProps {
+  onStartGame: (arg0: number) => void;
+}
 
-const StartGameScreen: React.FC<StartGameScreenProps> = ({}) => {
+const StartGameScreen: React.FC<StartGameScreenProps> = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState<number>();
@@ -32,7 +35,8 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({}) => {
 
   const confirmInputHandler = () => {
     const chosenNumber = parseInt(enteredValue);
-    if (chosenNumber === NaN || chosenNumber <= 0 || chosenNumber > 99) {
+    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+      // We show an alert! We have 3 predetermined styled of an alert button.
       Alert.alert('Invalid number!', 'Pick a number between 1 and 99.', [
         { text: 'Okay', style: 'destructive', onPress: resetInputHandler },
       ]);
@@ -45,12 +49,22 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({}) => {
     // We can use entered Value, beacouse state will be changed only after a re-render cycle!
     // Though all these states will be updated in one re-render cycle(they will be batched together)
     setSelectedNumber(chosenNumber);
+    Keyboard.dismiss();
   };
 
   let confirmedOutput;
 
   if (confirmed) {
-    confirmedOutput = <Text>PinPon: {selectedNumber}</Text>;
+    confirmedOutput = (
+      <Card style={styles.summaryContainer}>
+        <Text>You Selected</Text>
+        <NumberContainer>{selectedNumber}</NumberContainer>
+        <Button
+          title='Start Game'
+          onPress={() => onStartGame(selectedNumber as number)}
+        />
+      </Card>
+    );
   }
 
   return (
@@ -120,6 +134,10 @@ const styles = StyleSheet.create({
   input: {
     width: 50,
     textAlign: 'center',
+  },
+  summaryContainer: {
+    marginTop: 20,
+    alignItems: 'center',
   },
 });
 
