@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { StyleSheet, View, Text, Button, Alert } from 'react-native';
 import Card from '../components/Card';
 import NumberContainer from '../components/NumberContainer';
 
@@ -24,21 +24,67 @@ const generateRandomBetween: (
 
 interface GameScreenProps {
   userChoice: number;
+  onGameOver: (arg0: number) => void;
 }
 
-const GameScreen: React.FC<GameScreenProps> = ({ userChoice }) => {
+// COMPONENT
+const GameScreen: React.FC<GameScreenProps> = ({ userChoice, onGameOver }) => {
   // We make initial call. Exclude number chosen.
   const [currentGuess, setCurrentGuess] = useState(
     generateRandomBetween(1, 100, userChoice)
   );
+
+  const [rounds, setRounds] = useState(0);
+
+  useEffect(() => {
+    if (currentGuess === userChoice) {
+      onGameOver(rounds);
+    }
+  }, [currentGuess, userChoice, onGameOver]);
+
+  // These calues will survive rerender
+  const currentLow = useRef(1);
+  const currentHigh = useRef(100);
+
+  const nextGuessHandler = (direction: 'lower' | 'greater') => {
+    // When compuner guessed number smaller than our choice and we choose direction lower.
+    // It means lower is a wrong hint. Or opposite. So we check for incorrect hint.
+    if (
+      (direction === 'lower' && currentGuess < userChoice) ||
+      (direction === 'greater' && currentGuess > userChoice)
+    ) {
+      Alert.alert('Untrue hint.', 'Please choose correct hint.', [
+        { text: 'Okay', style: 'cancel' },
+      ]);
+      return;
+    }
+
+    if (direction === 'lower') {
+      // We save number we guessed as current high. So we don't generate higher number
+      // Refs have current value that is an actual value we store.
+      currentHigh.current = currentGuess;
+    } else {
+      currentLow.current = currentGuess;
+    }
+
+    // Computer's guess
+    const nextNumber = generateRandomBetween(
+      currentLow.current,
+      currentHigh.current,
+      currentGuess
+    );
+    setCurrentGuess(nextNumber);
+    // Increment Rounds
+    setRounds((curRounds) => curRounds + 1);
+  };
 
   return (
     <View style={styles.screen}>
       <Text>Opponent's guess</Text>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card style={styles.buttonContainer}>
-        <Button title='Lower' onPress={() => {}} />
-        <Button title='Greater' onPress={() => {}} />
+        <Button title='Lower' onPress={nextGuessHandler.bind(this, 'lower')} />
+        <Button title='Greater' onPress={() => nextGuessHandler('greater')} />
       </Card>
     </View>
   );
