@@ -26,7 +26,6 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    console.log('loading');
     return <AppLoading />;
   }
 
@@ -68,7 +67,7 @@ export default function App() {
     content = (
       <GameScreen onGameOver={gameOverHandler} userChoice={userNumber} />
     );
-  } else if (guessRounds > 0) {
+  } else if (1) {
     content = (
       <GameOverScreen
         roundsNumber={guessRounds}
