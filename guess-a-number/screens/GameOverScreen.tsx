@@ -1,7 +1,9 @@
 import React from 'react';
 import { Text, View, StyleSheet, Button, Image } from 'react-native';
 import BodyText from '../components/BodyText';
+import MainButton from '../components/MainButton';
 import TitleText from '../components/TitleText';
+import colors from '../constants/colors';
 
 interface GameOverScreenProps {
   roundsNumber: number;
@@ -33,9 +35,16 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
           }}
         />
       </View>
-      <BodyText>Rounds: {roundsNumber}</BodyText>
-      <BodyText>Number was: {userNumber}</BodyText>
-      <Button title='New Game' onPress={onRestart} />
+      <View style={styles.resultContainer}>
+        <BodyText style={styles.resultText}>
+          {/* We can nest Text components inside each another */}
+          Rounds: <Text style={styles.highlight}>{roundsNumber}</Text>
+        </BodyText>
+        <BodyText style={styles.resultText2}>
+          Number was: <Text style={styles.highlight}>{userNumber}</Text>
+        </BodyText>
+      </View>
+      <MainButton onPress={onRestart}>New Game</MainButton>
     </View>
   );
 };
@@ -56,6 +65,23 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     overflow: 'hidden',
     marginVertical: 30,
+  },
+  highlight: {
+    color: colors.primary,
+    fontFamily: 'open-sans-bold',
+  },
+  resultContainer: {
+    width: '80%',
+    height: 50,
+    marginVertical: 15,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  resultText: {
+    fontSize: 25,
+  },
+  resultText2: {
+    fontSize: 15,
   },
 });
 
