@@ -8,6 +8,7 @@ import {
   // Apifor interacting with a keyboard!
   Keyboard,
   Alert,
+  Dimensions,
 } from 'react-native';
 import BodyText from '../components/BodyText';
 import Card from '../components/Card';
@@ -121,8 +122,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   inputContainer: {
-    width: 300,
-    maxWidth: '80%',
+    // width: 300,
+    // maxWidth: '80%',
+    // Change for more flexible styles. To
+    maxWidth: '95%',
+    width: '80%',
+    minWidth: 300,
     alignItems: 'center',
   },
   title: {
@@ -131,7 +136,15 @@ const styles = StyleSheet.create({
     fontFamily: 'open-sans-bold',
   },
   button: {
-    width: 100,
+    // width: 100,
+    // This way we get dimensions of the device. Dimensions is an object.
+    // Screen only matters on android. With window status bar will be excluded from calculations
+    // Better to use window.
+    // Width gets overall width of the device
+    // Doing it like this it will make buttons always respect size of the device.
+    // Percentage with does kinda the same, but with width percentage it refers to parents width.
+    // And Dimensions refer to absoulte width and set it to pixels based on it.
+    width: Dimensions.get('window').width / 4,
   },
   input: {
     width: 50,
