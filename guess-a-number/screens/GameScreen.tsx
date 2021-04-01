@@ -6,6 +6,7 @@ import {
   Button,
   Alert,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import Card from '../components/Card';
 import MainButton from '../components/MainButton';
@@ -33,10 +34,15 @@ const generateRandomBetween: (
   }
 };
 
-const renderListItem = (value: number, numOfRound: number) => (
-  <View key={value} style={styles.listItem}>
-    <BodyText>#{numOfRound}</BodyText>
-    <BodyText>{value}</BodyText>
+// We have to change, so we can use renderItem in FlatList. It expects itemData
+const renderListItem = (
+  listLength: number,
+  // This is the shape of data that will be passed through renderItem
+  itemData: { index: number; item: number }
+) => (
+  <View style={styles.listItem}>
+    <BodyText>#{listLength - itemData.index}</BodyText>
+    <BodyText>{itemData.item}</BodyText>
   </View>
 );
 
@@ -113,11 +119,19 @@ const GameScreen: React.FC<GameScreenProps> = ({ userChoice, onGameOver }) => {
         {/* For FlatList and ScrollView we style it with contentContainerStyle */}
       </Card>
       <View style={styles.listContainer}>
-        <ScrollView contentContainerStyle={styles.list}>
+        {/* <ScrollView contentContainerStyle={styles.list}>
           {pastGuesses.map((guess, index) =>
             renderListItem(guess, pastGuesses.length - index)
           )}
-        </ScrollView>
+        </ScrollView> */}
+        <FlatList
+          // We have to convernt, bc key has to be a string
+          keyExtractor={(item) => item.toString()}
+          data={pastGuesses}
+          // We bind argument to it, bc renderItem passes only one argument when rendering
+          renderItem={renderListItem.bind(this, pastGuesses.length)}
+          contentContainerStyle={styles.list}
+        />
       </View>
     </View>
   );
@@ -138,24 +152,24 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    width: '80%',
+    width: '60%',
   },
   list: {
     // Says the container to grow as much as possible, but keeps contaienr behaviour the same. It's more flexible than flex: 1
     // This will make our scroll view work corectly.
     flexGrow: 1,
-    alignItems: 'center',
     justifyContent: 'flex-end',
   },
   listItem: {
     borderColor: '#ccc',
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
     padding: 15,
     marginVertical: 10,
     backgroundColor: 'white',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '60%',
+    width: '100%',
   },
 });
 
