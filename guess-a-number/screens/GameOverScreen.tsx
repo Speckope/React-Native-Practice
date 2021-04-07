@@ -6,6 +6,7 @@ import {
   Button,
   Image,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import BodyText from '../components/BodyText';
 import MainButton from '../components/MainButton';
