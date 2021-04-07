@@ -1,5 +1,12 @@
 import React from 'react';
-import { Text, View, StyleSheet, Button, Image } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  Image,
+  Dimensions,
+} from 'react-native';
 import BodyText from '../components/BodyText';
 import MainButton from '../components/MainButton';
 import TitleText from '../components/TitleText';
@@ -60,11 +67,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   imageContainer: {
-    width: 300,
-    height: 300,
-    borderRadius: 150,
+    width: Dimensions.get('window').width * 0.7,
+    height: Dimensions.get('window').width * 0.7,
+    borderRadius: (Dimensions.get('window').width * 0.7) / 2,
     overflow: 'hidden',
-    marginVertical: 30,
+    // Sets to 5% ofscreen height
+    marginVertical: Dimensions.get('window').height / 30,
   },
   highlight: {
     color: colors.primary,
@@ -73,12 +81,12 @@ const styles = StyleSheet.create({
   resultContainer: {
     width: '80%',
     height: 50,
-    marginVertical: 15,
+    marginVertical: Dimensions.get('window').height / 60,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   resultText: {
-    fontSize: 25,
+    fontSize: Dimensions.get('window').height < 400 ? 16 : 20,
   },
   resultText2: {
     fontSize: 15,

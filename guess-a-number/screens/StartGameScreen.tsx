@@ -9,6 +9,9 @@ import {
   Keyboard,
   Alert,
   Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  useWindowDimensions,
 } from 'react-native';
 import BodyText from '../components/BodyText';
 import Card from '../components/Card';
@@ -26,6 +29,23 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState<number>();
+
+  // ---- OTHER way of handling changind dimensions(like from landscape to portrait mode)
+  // const [ buttonWidth, setButtonWidth ] = useState(Dimensions.get('window').width / 4);
+
+  // useEffect(() => {
+  //   const updateLayout = () => {
+  //     setButtonWidth(Dimensions.get('window').width / 4);
+  //   };
+
+  //   Dimensions.addEventListener('change', updateLayout);
+  //   return () => {
+  //     Dimensions.removeEventListener('change', updateLayout);
+  //   };
+  // });
+
+  // Hook for getting dimensions when they change!
+  const window = useWindowDimensions();
 
   const numberInputHandler = (inputText: string) => {
     // We replace any non-number value with empry string
@@ -70,41 +90,56 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({ onStartGame }) => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.screen}>
-        <Text style={styles.title}>PikuPiku</Text>
-        <Card style={styles.inputContainer}>
-          <BodyText> Select a Number</BodyText>
-          <Input
-            style={styles.input}
-            blurOnSubmit
-            autoCapitalize='none'
-            autoCorrect={false}
-            keyboardType='number-pad'
-            maxLength={2}
-            onChangeText={numberInputHandler}
-            value={enteredValue}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                title='RESET'
-                onPress={resetInputHandler}
-                color={Colors.accent}
+    <ScrollView>
+      <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={30}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View style={styles.screen}>
+            <Text style={styles.title}>PikuPiku</Text>
+            <Card style={styles.inputContainer}>
+              <BodyText> Select a Number</BodyText>
+              <Input
+                // With this screen won't be cover full in keyboard when we click on input!
+                // And our props on KeyboardAvoidingView will work as intended.
+                disableFullscreenUI={true}
+                style={styles.input}
+                blurOnSubmit
+                autoCapitalize='none'
+                autoCorrect={false}
+                keyboardType='number-pad'
+                maxLength={2}
+                onChangeText={numberInputHandler}
+                value={enteredValue}
               />
-            </View>
-            <View style={styles.button}>
-              <Button
-                title='CONFIRM'
-                onPress={confirmInputHandler}
-                color={Colors.primary}
-              />
-            </View>
+              <View style={styles.buttonContainer}>
+                <View
+                  style={{
+                    width: window.width / 4,
+                  }}
+                >
+                  <Button
+                    title='RESET'
+                    onPress={resetInputHandler}
+                    color={Colors.accent}
+                  />
+                </View>
+                <View
+                  style={{
+                    width: window.width / 4,
+                  }}
+                >
+                  <Button
+                    title='CONFIRM'
+                    onPress={confirmInputHandler}
+                    color={Colors.primary}
+                  />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
@@ -113,27 +148,25 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+  },
+  title: {
+    fontSize: 20,
+    marginVertical: 10,
+    fontFamily: 'open-sans-bold',
+  },
+  inputContainer: {
+    // width: 300,
+    // maxWidth: '80%',
+    // Change for more flexible styles. To
+    width: '80%',
+    maxWidth: '95%',
+    alignItems: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-  },
-  inputContainer: {
-    // width: 300,
-    // maxWidth: '80%',
-    // Change for more flexible styles. To
-    maxWidth: '95%',
-    width: '80%',
-    minWidth: 300,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 20,
-    marginVertical: 10,
-    fontFamily: 'open-sans-bold',
   },
   button: {
     // width: 100,

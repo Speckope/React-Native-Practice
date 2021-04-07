@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   FlatList,
+  Dimensions,
 } from 'react-native';
 import Card from '../components/Card';
 import MainButton from '../components/MainButton';
@@ -146,13 +147,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 20,
+    // We can make if conditions with this!
+    marginTop: Dimensions.get('window').height > 600 ? 20 : 10,
     width: 400,
     maxWidth: '90%',
   },
   listContainer: {
     flex: 1,
-    width: '60%',
+    width: Dimensions.get('window').height > 350 ? '60%' : '80%',
   },
   list: {
     // Says the container to grow as much as possible, but keeps contaienr behaviour the same. It's more flexible than flex: 1
