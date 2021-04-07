@@ -8,6 +8,7 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import Card from '../components/Card';
 import MainButton from '../components/MainButton';
@@ -15,6 +16,7 @@ import NumberContainer from '../components/NumberContainer';
 // import DefaultStyles from '../constants/default-styles';
 import { Ionicons } from '@expo/vector-icons';
 import BodyText from '../components/BodyText';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const generateRandomBetween: (
   min: number,
@@ -54,7 +56,14 @@ interface GameScreenProps {
 
 // COMPONENT
 const GameScreen: React.FC<GameScreenProps> = ({ userChoice, onGameOver }) => {
+  // This will lock the screen (And can change orientation on this screen)
+  // ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+  // We can also get orientation with above, we can also addListener to this, which will fire
+  // when orientation changes!
+
   const initialGuess = generateRandomBetween(1, 100, userChoice);
+
+  const { width, height } = useWindowDimensions();
 
   // We make initial call. Exclude number chosen.
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
@@ -106,6 +115,40 @@ const GameScreen: React.FC<GameScreenProps> = ({ userChoice, onGameOver }) => {
     setPastGuesses((curPastGuesses) => [nextNumber, ...curPastGuesses]);
   };
 
+  if (height < 500) {
+    return (
+      <View style={styles.screen}>
+        <Text>Opponent's guess</Text>
+        <View style={styles.controls}>
+          <MainButton onPress={nextGuessHandler.bind(this, 'lower')}>
+            <Ionicons name='md-remove' size={24} color='white' />
+          </MainButton>
+          <NumberContainer>{currentGuess}</NumberContainer>
+
+          <MainButton onPress={() => nextGuessHandler('greater')}>
+            <Ionicons name='md-add' size={24} color='white' />
+          </MainButton>
+        </View>
+
+        <View style={styles.listContainer}>
+          {/* <ScrollView contentContainerStyle={styles.list}>
+            {pastGuesses.map((guess, index) =>
+              renderListItem(guess, pastGuesses.length - index)
+            )}
+          </ScrollView> */}
+          <FlatList
+            // We have to convernt, bc key has to be a string
+            keyExtractor={(item) => item.toString()}
+            data={pastGuesses}
+            // We bind argument to it, bc renderItem passes only one argument when rendering
+            renderItem={renderListItem.bind(this, pastGuesses.length)}
+            contentContainerStyle={styles.list}
+          />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.screen}>
       <Text>Opponent's guess</Text>
@@ -143,6 +186,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: 'center',
+    width: '100%',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -172,6 +216,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '80%',
+    alignItems: 'center',
   },
 });
 
