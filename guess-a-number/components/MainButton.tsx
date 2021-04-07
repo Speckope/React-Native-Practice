@@ -1,8 +1,10 @@
 import React from 'react';
 import {
   ButtonProps,
+  Platform,
   StyleSheet,
   Text,
+  TouchableNativeFeedback,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -13,12 +15,21 @@ interface MainButtonProps {
 }
 
 const MainButton: React.FC<MainButtonProps> = ({ children, onPress }) => {
+  let ButtonComponent: any = TouchableOpacity;
+
+  if (Platform.OS === 'android' && Platform.Version >= 21) {
+    ButtonComponent = TouchableNativeFeedback;
+  }
+
   return (
-    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
-      <View style={styles.button}>
-        <Text style={styles.buttonText}>{children}</Text>
-      </View>
-    </TouchableOpacity>
+    // We add button countainer so a ripple effect on android works correctly
+    <View style={styles.buttonContainer}>
+      <ButtonComponent activeOpacity={0.6} onPress={onPress}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>{children}</Text>
+        </View>
+      </ButtonComponent>
+    </View>
   );
 };
 
@@ -33,6 +44,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'open-sans-regular',
     fontSize: 18,
+  },
+  buttonContainer: {
+    borderRadius: 25,
+    overflow: 'hidden',
   },
 });
 

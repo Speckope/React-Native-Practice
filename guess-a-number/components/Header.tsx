@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import Colors from '../constants/colors';
 
@@ -8,6 +8,13 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
+  // We can select things with this method based on what platform we use.
+  // Here it would be selecting different style!
+  // Platform.select({
+  //   ios: styles.headerIOS
+  //   android: styles.headerAndroid
+  // })
+
   return (
     <View style={styles.header}>
       <Text style={styles.headerTitle}>{title}</Text>
@@ -20,9 +27,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 90,
     paddingTop: 36,
-    backgroundColor: Colors.primary,
+    backgroundColor: Platform.OS === 'android' ? Colors.primary : 'white',
     alignItems: 'center',
     justifyContent: 'center',
+    borderBottomColor: Platform.OS === 'ios' ? '#ccc' : 'transparent',
+    borderBottomWidth: Platform.OS === 'ios' ? 1 : 0,
   },
   headerTitle: {
     color: 'black',
