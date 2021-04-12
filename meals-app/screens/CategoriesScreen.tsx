@@ -1,33 +1,54 @@
 import React from 'react';
-import { StyleSheet, View, Text, ViewStyle, Button } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ViewStyle,
+  Button,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import { NavigationStackProp } from 'react-navigation-stack';
+import { CATEGORIES } from '../data/dummy-data';
+import Category from '../models/category';
 
 interface CategoriesScreenProps {
   navigation: NavigationStackProp;
 }
 
 const CategoriesScreen: React.FC<CategoriesScreenProps> = ({ navigation }) => {
-  return (
-    <View style={styles.screen}>
-      <Text>Categories Screen</Text>
-      <Button
-        title='Go to meals'
+  const renderGridItem: (itemData: {
+    item: Category;
+  }) => React.ReactElement | null = (itemData) => {
+    return (
+      <TouchableOpacity
+        style={styles.gridItem}
         onPress={() => {
-          // This is main method we use to navigate
-          // We can also do it like this: navigation.navigate('SomeIdentifier');
+          console.log('UwU');
           navigation.navigate({ routeName: 'CategoryMeals' });
-          // navigation.replace('CategoryMeals'); // replace will replace current stack screen with another
-          // replace won't push another screen on top, but replace current!
-          // There is also no animation and no back button, beacouse stack is empty.
-          // Use it e.g. on login
         }}
-      />
-    </View>
+      >
+        <View>
+          <Text>{itemData.item.title}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <FlatList
+      // We don't need keyExtractor here, it accepts key as id as well.
+      // keyExtractor={(item) => item.id}
+      numColumns={2}
+      data={CATEGORIES}
+      renderItem={renderGridItem}
+    />
   );
 };
 
 interface Styles {
   screen: ViewStyle;
+  gridItem: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -35,6 +56,11 @@ const styles = StyleSheet.create<Styles>({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  gridItem: {
+    flex: 1,
+    margin: 15,
+    height: 150,
   },
 });
 
