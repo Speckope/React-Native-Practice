@@ -1,5 +1,7 @@
+import { Platform } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import Colors from '../constants/Colors';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
@@ -15,10 +17,20 @@ import MealDetailScreen from '../screens/MealDetailScreen';
 const MealsNavigator = createStackNavigator({
   // We use any identifier we want as a key, value is a screen we want to point at!
   // Top level component mapped to navigator gets a special prop - navigation (an object) that lets us navigate to it.
-  Categories: CategoriesScreen,
+  Categories: {
+    screen: CategoriesScreen,
+  },
   // We also can do a longer form, we wil then be able to set additional properies
   CategoryMeals: {
     screen: CategoryMealsScreen,
+    // We can add styles here
+    // navigationOptions: {
+    //   headerStyle: {
+    //     backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
+    //   },
+    //   headerTintColor:
+    //     Platform.OS === 'android' ? 'white' : Colors.primaryColor,
+    // },
   },
   MealDetail: MealDetailScreen,
 });

@@ -1,22 +1,34 @@
 import React from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  ViewStyle,
-  Button,
   FlatList,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
+  ViewStyle,
 } from 'react-native';
+import {
+  NavigationComponent,
+  NavigationParams,
+  NavigationRoute,
+} from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
+import {
+  StackNavigationOptions,
+  StackNavigationProp,
+} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import { CATEGORIES } from '../data/dummy-data';
 import Category from '../models/category';
 
 interface CategoriesScreenProps {
-  navigation: NavigationStackProp;
+  // navigation: NavigationStackProp;
 }
 
-const CategoriesScreen: React.FC<CategoriesScreenProps> = ({ navigation }) => {
+// This is strange solution. Idk else. It's v4 anyway...
+const CategoriesScreen: NavigationComponent<
+  StackNavigationOptions,
+  StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
+> = ({ navigation }: { navigation: NavigationStackProp }) => {
   const renderGridItem: (itemData: {
     item: Category;
   }) => React.ReactElement | null = (itemData) => {
@@ -24,8 +36,13 @@ const CategoriesScreen: React.FC<CategoriesScreenProps> = ({ navigation }) => {
       <TouchableOpacity
         style={styles.gridItem}
         onPress={() => {
-          console.log('UwU');
-          navigation.navigate({ routeName: 'CategoryMeals' });
+          navigation.navigate({
+            routeName: 'CategoryMeals',
+            // We are forwarding id to new scren we load. We will then use this id.
+            params: {
+              categoryId: itemData.item.id,
+            },
+          });
         }}
       >
         <View>
@@ -44,6 +61,10 @@ const CategoriesScreen: React.FC<CategoriesScreenProps> = ({ navigation }) => {
       renderItem={renderGridItem}
     />
   );
+};
+
+CategoriesScreen.navigationOptions = {
+  headerTitle: 'Meal Categories',
 };
 
 interface Styles {

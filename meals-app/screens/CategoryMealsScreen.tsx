@@ -1,17 +1,32 @@
 import React from 'react';
-import { StyleSheet, View, Text, ViewStyle, Button } from 'react-native';
+import { Button, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import {
+  NavigationComponent,
+  NavigationParams,
+  NavigationRoute,
+} from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
+import {
+  StackNavigationOptions,
+  StackNavigationProp,
+} from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import { CATEGORIES } from '../data/dummy-data';
 
-interface CategoryMealsScreenProps {
-  navigation: NavigationStackProp;
-}
+interface CategoryMealsScreenProps {}
 
-const CategoryMealsScreen: React.FC<CategoryMealsScreenProps> = ({
-  navigation,
-}) => {
+const CategoryMealsScreen: NavigationComponent<
+  StackNavigationOptions,
+  StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
+> = ({ navigation }: { navigation: NavigationStackProp }) => {
+  // We extract parameters!
+  const catId = navigation.getParam('categoryId');
+
+  const selectedCategory = CATEGORIES.find((cat) => cat.id === catId);
+
   return (
     <View style={styles.screen}>
       <Text>Category Meals Screen</Text>
+      <Text>{selectedCategory?.title}</Text>
       <Button
         title='Go to meals'
         onPress={() => {
@@ -37,6 +52,17 @@ const CategoryMealsScreen: React.FC<CategoryMealsScreenProps> = ({
 interface Styles {
   screen: ViewStyle;
 }
+
+// So we get acceess here to navigationData as well. This is same navigation prop we get on our screen
+CategoryMealsScreen.navigationOptions = (navigationData) => {
+  const catId = navigationData.navigation.getParam('categoryId');
+  // We select category we are currently on
+  const selectedCategory = CATEGORIES.find((cat) => cat.id === catId);
+
+  return {
+    headerTitle: selectedCategory?.title,
+  };
+};
 
 const styles = StyleSheet.create<Styles>({
   screen: {
