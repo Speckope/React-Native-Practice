@@ -17,6 +17,7 @@ import {
   StackNavigationOptions,
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import CategoryGridTile from '../components/CategoryGridTile';
 import { CATEGORIES } from '../data/dummy-data';
 import Category from '../models/category';
 
@@ -33,9 +34,10 @@ const CategoriesScreen: NavigationComponent<
     item: Category;
   }) => React.ReactElement | null = (itemData) => {
     return (
-      <TouchableOpacity
-        style={styles.gridItem}
-        onPress={() => {
+      <CategoryGridTile
+        title={itemData.item.title}
+        color={itemData.item.color}
+        onSelect={() => {
           navigation.navigate({
             routeName: 'CategoryMeals',
             // We are forwarding id to new scren we load. We will then use this id.
@@ -44,11 +46,7 @@ const CategoriesScreen: NavigationComponent<
             },
           });
         }}
-      >
-        <View>
-          <Text>{itemData.item.title}</Text>
-        </View>
-      </TouchableOpacity>
+      />
     );
   };
 
@@ -69,7 +67,6 @@ CategoriesScreen.navigationOptions = {
 
 interface Styles {
   screen: ViewStyle;
-  gridItem: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -77,11 +74,6 @@ const styles = StyleSheet.create<Styles>({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  gridItem: {
-    flex: 1,
-    margin: 15,
-    height: 150,
   },
 });
 

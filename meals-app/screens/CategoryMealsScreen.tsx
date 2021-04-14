@@ -10,7 +10,7 @@ import {
   StackNavigationOptions,
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
-import { CATEGORIES } from '../data/dummy-data';
+import { CATEGORIES, MEALS } from '../data/dummy-data';
 
 interface CategoryMealsScreenProps {}
 
@@ -22,6 +22,10 @@ const CategoryMealsScreen: NavigationComponent<
   const catId = navigation.getParam('categoryId');
 
   const selectedCategory = CATEGORIES.find((cat) => cat.id === catId);
+
+  const displayedMeals = MEALS.filter(
+    (meal) => meal.categoryIds.indexOf(catId) >= 0
+  );
 
   return (
     <View style={styles.screen}>
