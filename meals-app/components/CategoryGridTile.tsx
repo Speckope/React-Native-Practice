@@ -56,7 +56,13 @@ const styles = StyleSheet.create<Styles>({
     margin: 15,
     height: 150,
     borderRadius: 10,
-    overflow: 'hidden',
+    // We set it only on ios bc then we have good shadow. We need hidden only for androis ripple effect
+    overflow:
+      Platform.OS === 'android' && Platform.Version >= 21
+        ? 'hidden'
+        : 'visible',
+    // elevation is for setting shadow on android
+    elevation: 5,
   },
   container: {
     flex: 1,
@@ -66,8 +72,7 @@ const styles = StyleSheet.create<Styles>({
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 10,
-    // elevation is for setting shadow on android
-    elevation: 3,
+
     padding: 15,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',

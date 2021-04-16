@@ -1,5 +1,13 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { ListRenderItem } from 'react-native';
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+  FlatList,
+} from 'react-native';
 import {
   NavigationComponent,
   NavigationParams,
@@ -10,7 +18,9 @@ import {
   StackNavigationOptions,
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import MealItem from '../components/MealItem';
 import { CATEGORIES, MEALS } from '../data/dummy-data';
+import Meal from '../models/meal';
 
 interface CategoryMealsScreenProps {}
 
@@ -18,6 +28,28 @@ const CategoryMealsScreen: NavigationComponent<
   StackNavigationOptions,
   StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
 > = ({ navigation }: { navigation: NavigationStackProp }) => {
+  // renderItem function
+  const renderMealItem: ListRenderItem<Meal> = (data) => {
+    return (
+      <MealItem
+        duration={data.item.duration}
+        title={data.item.title}
+        onSelectMeal={() => {
+          navigation.navigate({
+            routeName: 'MealDetail',
+            // We forward the parameter so we will be able to move to selected meal
+            params: {
+              mealId: data.item.id,
+            },
+          });
+        }}
+        complexity={data.item.complexity}
+        affordability={data.item.affordability}
+        image={data.item.imageUrl}
+      />
+    );
+  };
+
   // We extract parameters!
   const catId = navigation.getParam('categoryId');
 
@@ -29,25 +61,10 @@ const CategoryMealsScreen: NavigationComponent<
 
   return (
     <View style={styles.screen}>
-      <Text>Category Meals Screen</Text>
-      <Text>{selectedCategory?.title}</Text>
-      <Button
-        title='Go to meals'
-        onPress={() => {
-          // This is main method we use to navigate
-          // We can also do it like this: navigation.navigate('SomeIdentifier');
-          // Also navigation.puish('MealDetail). With push we can go to the page we are already on!
-          // We may use it when there is same screen with diffretn content. We may load the same screen with diffrent content, like
-          // it would be used in dropbox when we load same screen with different folder/
-          navigation.navigate({ routeName: 'MealDetail' });
-        }}
-      />
-      <Button
-        title='Go Back'
-        onPress={() => {
-          // navigation.pop() pops of upmost screen no the stack (so the one we are on). This will make us go
-          navigation.pop();
-        }}
+      <FlatList
+        style={{ width: '90%' }}
+        data={displayedMeals}
+        renderItem={renderMealItem}
       />
     </View>
   );
