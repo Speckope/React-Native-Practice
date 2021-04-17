@@ -19,6 +19,7 @@ import {
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import MealItem from '../components/MealItem';
+import MealList from '../components/MealList';
 import { CATEGORIES, MEALS } from '../data/dummy-data';
 import Meal from '../models/meal';
 
@@ -28,51 +29,18 @@ const CategoryMealsScreen: NavigationComponent<
   StackNavigationOptions,
   StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
 > = ({ navigation }: { navigation: NavigationStackProp }) => {
-  // renderItem function
-  const renderMealItem: ListRenderItem<Meal> = (data) => {
-    return (
-      <MealItem
-        duration={data.item.duration}
-        title={data.item.title}
-        onSelectMeal={() => {
-          navigation.navigate({
-            routeName: 'MealDetail',
-            // We forward the parameter so we will be able to move to selected meal
-            params: {
-              mealId: data.item.id,
-            },
-          });
-        }}
-        complexity={data.item.complexity}
-        affordability={data.item.affordability}
-        image={data.item.imageUrl}
-      />
-    );
-  };
-
-  // We extract parameters!
+  // Extract category param..
   const catId = navigation.getParam('categoryId');
-
+  // Get the category.
   const selectedCategory = CATEGORIES.find((cat) => cat.id === catId);
-
+  // Select Meals we want to display from category
   const displayedMeals = MEALS.filter(
-    (meal) => meal.categoryIds.indexOf(catId) >= 0
+    // Get the meals that have selected category id in its category array
+    (meal) => meal.categoryIds.includes(catId)
   );
 
-  return (
-    <View style={styles.screen}>
-      <FlatList
-        style={{ width: '90%' }}
-        data={displayedMeals}
-        renderItem={renderMealItem}
-      />
-    </View>
-  );
+  return <MealList listData={displayedMeals} navigation={navigation} />;
 };
-
-interface Styles {
-  screen: ViewStyle;
-}
 
 // So we get acceess here to navigationData as well. This is same navigation prop we get on our screen
 CategoryMealsScreen.navigationOptions = (navigationData) => {
@@ -84,13 +52,5 @@ CategoryMealsScreen.navigationOptions = (navigationData) => {
     headerTitle: selectedCategory?.title,
   };
 };
-
-const styles = StyleSheet.create<Styles>({
-  screen: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default CategoryMealsScreen;

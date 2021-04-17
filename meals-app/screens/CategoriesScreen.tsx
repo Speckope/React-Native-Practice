@@ -13,12 +13,15 @@ import {
   NavigationParams,
   NavigationRoute,
 } from 'react-navigation';
+import { DrawerActions } from 'react-navigation-drawer';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { NavigationStackProp } from 'react-navigation-stack';
 import {
   StackNavigationOptions,
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import CategoryGridTile from '../components/CategoryGridTile';
+import CustomHeaderButton from '../components/HeaderButton';
 import { CATEGORIES } from '../data/dummy-data';
 import Category from '../models/category';
 
@@ -61,8 +64,21 @@ const CategoriesScreen: NavigationComponent<
   );
 };
 
-CategoriesScreen.navigationOptions = {
-  headerTitle: 'Meal Categories',
+CategoriesScreen.navigationOptions = (navData) => {
+  return {
+    headerTitle: 'Meal Categories',
+    headerLeft: () => (
+      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+        <Item
+          title='Menu'
+          iconName='ios-menu'
+          onPress={() =>
+            navData.navigation.dispatch(DrawerActions.toggleDrawer())
+          }
+        />
+      </HeaderButtons>
+    ),
+  };
 };
 
 interface Styles {

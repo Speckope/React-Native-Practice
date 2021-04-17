@@ -1,102 +1,134 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createAppContainer } from 'react-navigation';
+import {
+  createAppContainer,
+  CreateNavigatorConfig,
+  NavigationParams,
+  NavigationRoute,
+  NavigationRouteConfigMap,
+  NavigationStackRouterConfig,
+} from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import {
+  createBottomTabNavigator,
+  NavigationBottomTabOptions,
+  NavigationTabProp,
+} from 'react-navigation-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import {
+  StackNavigationConfig,
+  StackNavigationOptions,
+  StackNavigationProp,
+} from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import FiltersScreen from '../screens/FiltersScreen';
 
-// type RootStackParamList = {
-//     Profile: undefined,
-//     CategoryMeals: undefined,
-//     MealDetail: undefined
-// };
+// Config
+const defaultStackNavOptions: CreateNavigatorConfig<
+  StackNavigationConfig,
+  NavigationStackRouterConfig,
+  StackNavigationOptions,
+  StackNavigationProp
+> = {
+  defaultNavigationOptions: {
+    headerStyle: {
+      backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
+    },
+    headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor,
+  },
+};
 
-// This takes at least one argument which is screens we want to navigate to
-// createStackNavigator return React Component
 const MealsNavigator = createStackNavigator(
   {
-    // We use any identifier we want as a key, value is a screen we want to point at!
-    // Top level component mapped to navigator gets a special prop - navigation (an object) that lets us navigate to it.
     Categories: {
       screen: CategoriesScreen,
     },
-    // We also can do a longer form, we wil then be able to set additional properies
     CategoryMeals: {
       screen: CategoryMealsScreen,
-      // We can add styles here
-      // navigationOptions: {
-      //   headerStyle: {
-      //     backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
-      //   },
-      //   headerTintColor:
-      //     Platform.OS === 'android' ? 'white' : Colors.primaryColor,
-      // },
     },
     MealDetail: MealDetailScreen,
   },
-  {
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : '',
-      },
-      headerTintColor:
-        Platform.OS === 'android' ? 'white' : Colors.primaryColor,
-    },
-    // With this scrrens will slide from below
-    // mode: 'modal'
-
-    // This will make it so we will start on MealDetail (It will be our initial screen)
-    // initialRouteName: 'MealDetails',
-  }
+  defaultStackNavOptions
 );
 
-const MealsFavTabNavigator = createBottomTabNavigator(
+const FavNavigator = createStackNavigator(
   {
-    // We can return navigator, bc it's a React Component.
-    // It will go to this stack. It also keeps its state when we switch navigators!
-    Meals: {
-      screen: MealsNavigator,
-      navigationOptions: {
-        // This is straightforward method for adding an icon to navigation tab!
-        // We dynamically retrieve tintColor!
-        tabBarIcon: (tabInfo) => {
-          return (
-            <Ionicons
-              name='ios-restaurant'
-              size={25}
-              color={tabInfo.tintColor}
-            />
-          );
-        },
-      },
-    },
-    Favorites: {
-      screen: FavoritesScreen,
-      navigationOptions: {
-        // This is straightforward method for adding an icon to navigation tab!
-        tabBarIcon: (tabInfo) => {
-          return (
-            // We dynamically retrieve tintColor!
-            <Ionicons name='ios-star' size={25} color={tabInfo.tintColor} />
-          );
-        },
-        tabBarLabel: 'Favorites!',
+    Favorites: FavoritesScreen,
+    MealDetail: MealDetailScreen,
+  },
+  defaultStackNavOptions
+);
+
+// Configuration fot BottonTab
+// Got it right!! :D we extract it so we can use it in MaterialTab
+const tabConfig: NavigationRouteConfigMap<
+  NavigationBottomTabOptions,
+  NavigationTabProp<NavigationRoute<NavigationParams>, any>,
+  unknown
+> = {
+  // We can return navigator, bc it's a React Component.
+  // It will go to this stack. It also keeps its state when we switch navigators!
+  Meals: {
+    screen: MealsNavigator,
+    navigationOptions: {
+      // This is straightforward method for adding an icon to navigation tab!
+      // We dynamically retrieve tintColor!
+
+      tabBarIcon: (tabInfo) => {
+        return (
+          <Ionicons name='ios-restaurant' size={25} color={tabInfo.tintColor} />
+        );
       },
     },
   },
-  {
-    tabBarOptions: {
-      activeTintColor: Colors.accentColor,
+  Favorites: {
+    screen: FavNavigator,
+    navigationOptions: {
+      // This is straightforward method for adding an icon to navigation tab!
+      tabBarIcon: (tabInfo) => {
+        return (
+          // We dynamically retrieve tintColor!
+          <Ionicons name='ios-star' size={25} color={tabInfo.tintColor} />
+        );
+      },
+      tabBarLabel: 'Favorites!',
     },
-  }
+  },
+};
+
+// We use material design tab navigator for android!
+const MealsFavTabNavigator =
+  Platform.OS === 'android'
+    ? createMaterialBottomTabNavigator(tabConfig, {
+        activeColor: 'white',
+        shifting: true,
+        barStyle: {
+          backgroundColor: Colors.primaryColor,
+        },
+      })
+    : createBottomTabNavigator(tabConfig, {
+        tabBarOptions: {
+          activeTintColor: Colors.accentColor,
+        },
+      });
+
+const FiltersNavigator = createStackNavigator(
+  {
+    Filters: FiltersScreen,
+  },
+  defaultStackNavOptions
 );
 
-// We use return react component (createAppContainer)
-// We return MealsFavTabNavigator beacouse MealsNavigator is nested inside it.
-// This is how we can combine navigators
-export default createAppContainer(MealsFavTabNavigator);
+// We start with drawer navigator
+const MainNavigator = createDrawerNavigator({
+  MealsFavs: MealsFavTabNavigator,
+  Filters: FiltersNavigator,
+});
+
+export default createAppContainer(MainNavigator);

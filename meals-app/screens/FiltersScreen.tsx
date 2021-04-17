@@ -1,14 +1,31 @@
 import React from 'react';
-import { StyleSheet, View, Text, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import {
+  NavigationComponent,
+  NavigationRoute,
+  NavigationParams,
+} from 'react-navigation';
+import { NavigationStackProp } from 'react-navigation-stack';
+import {
+  StackNavigationOptions,
+  StackNavigationProp,
+} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 
 interface FiltersScreenProps {}
 
-const FiltersScreen: React.FC<FiltersScreenProps> = ({}) => {
+const FiltersScreen: NavigationComponent<
+  StackNavigationOptions,
+  StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
+> = ({ navigation }: { navigation: NavigationStackProp }) => {
   return (
     <View>
       <Text>Filters Screen</Text>
     </View>
   );
+};
+
+FiltersScreen.navigationOptions = {
+  headerTitle: 'Filter Meals',
 };
 
 interface Styles {
