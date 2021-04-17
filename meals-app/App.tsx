@@ -2,9 +2,11 @@ import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LogBox, StyleSheet, Text, View } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import MealsNavigator from './navigation/MealsNavigator';
+// DELETE LATER. WHEN NAVIGATION v5 is used
+LogBox.ignoreAllLogs();
 
 export default function App() {
   //This makes is to our app will use more performant screens. It works under the hood.
