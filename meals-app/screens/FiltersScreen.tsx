@@ -7,21 +7,22 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { round } from 'react-native-reanimated';
 import {
   NavigationComponent,
-  NavigationRoute,
   NavigationParams,
-  DrawerActions,
+  NavigationRoute,
 } from 'react-navigation';
+import { DrawerActions } from 'react-navigation-drawer';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { NavigationStackProp } from 'react-navigation-stack';
 import {
   StackNavigationOptions,
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import { useDispatch } from 'react-redux';
 import CustomHeaderButton from '../components/HeaderButton';
 import Colors from '../constants/Colors';
+import { setFilters } from '../store/actions/mealsActions';
 
 // FilterSwitch Component
 interface FilterSwitchProps {
@@ -50,12 +51,14 @@ const FilterSwitch: React.FC<FilterSwitchProps> = ({
 };
 
 // FilterScreen Component
-interface FiltersScreenProps {}
+// interface FiltersScreenProps {}
 
 const FiltersScreen: NavigationComponent<
   StackNavigationOptions,
   StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
 > = ({ navigation }: { navigation: NavigationStackProp }) => {
+  const dispatch = useDispatch();
+
   const [isGlutenFree, setIsGlutenFree] = useState(false);
   const [isLactoseFree, setIsLactoseFree] = useState(false);
   const [isVegan, setIsVegan] = useState(false);
@@ -70,8 +73,8 @@ const FiltersScreen: NavigationComponent<
       isVegetarian,
     };
 
-    console.log(appliedFilters);
-  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
+    dispatch(setFilters(appliedFilters));
+  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian, dispatch]);
 
   useEffect(() => {
     // Params get merged with previously exising params

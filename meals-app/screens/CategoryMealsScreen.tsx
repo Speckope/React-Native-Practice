@@ -1,13 +1,5 @@
 import React from 'react';
-import { ListRenderItem } from 'react-native';
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-  FlatList,
-} from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import {
   NavigationComponent,
   NavigationParams,
@@ -18,26 +10,34 @@ import {
   StackNavigationOptions,
   StackNavigationProp,
 } from 'react-navigation-stack/lib/typescript/src/vendor/types';
-import MealItem from '../components/MealItem';
+import { useAppSelector } from '../App';
+import DefaultText from '../components/DefaultText';
 import MealList from '../components/MealList';
-import { CATEGORIES, MEALS } from '../data/dummy-data';
-import Meal from '../models/meal';
+import { CATEGORIES } from '../data/dummy-data';
 
-interface CategoryMealsScreenProps {}
+// interface CategoryMealsScreenProps {}
 
 const CategoryMealsScreen: NavigationComponent<
   StackNavigationOptions,
   StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>
 > = ({ navigation }: { navigation: NavigationStackProp }) => {
+  const avilableMeals = useAppSelector((state) => state.meals.filteredMeals);
+
   // Extract category param..
   const catId = navigation.getParam('categoryId');
-  // Get the category.
-  const selectedCategory = CATEGORIES.find((cat) => cat.id === catId);
   // Select Meals we want to display from category
-  const displayedMeals = MEALS.filter(
+  const displayedMeals = avilableMeals.filter(
     // Get the meals that have selected category id in its category array
     (meal) => meal.categoryIds.includes(catId)
   );
+
+  if (displayedMeals.length === 0) {
+    return (
+      <View style={styles.content}>
+        <DefaultText>No Meals Found</DefaultText>
+      </View>
+    );
+  }
 
   return <MealList listData={displayedMeals} navigation={navigation} />;
 };
@@ -52,5 +52,16 @@ CategoryMealsScreen.navigationOptions = (navigationData) => {
     headerTitle: selectedCategory?.title,
   };
 };
+
+interface Styles {
+  content: ViewStyle;
+}
+
+const styles = StyleSheet.create<Styles>({
+  content: {
+    flex: 1,
+    alignItems: 'center',
+  },
+});
 
 export default CategoryMealsScreen;

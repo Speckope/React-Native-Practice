@@ -18,7 +18,4 @@ const CustomHeaderButton: React.FC<CustomHeaderButtonProps> = (props) => {
   );
 };
 
-interface Styles {}
-const styles = StyleSheet.create<Styles>({});
-
 export default CustomHeaderButton;

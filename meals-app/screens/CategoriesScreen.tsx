@@ -1,13 +1,5 @@
 import React from 'react';
-import { ListRenderItem } from 'react-native';
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { FlatList, ListRenderItem } from 'react-native';
 import {
   NavigationComponent,
   NavigationParams,
@@ -25,9 +17,9 @@ import CustomHeaderButton from '../components/HeaderButton';
 import { CATEGORIES } from '../data/dummy-data';
 import Category from '../models/category';
 
-interface CategoriesScreenProps {
-  // navigation: NavigationStackProp;
-}
+// interface CategoriesScreenProps {
+//   // navigation: NavigationStackProp;
+// }
 
 // This is strange solution. Idk else. It's v4 anyway...
 const CategoriesScreen: NavigationComponent<
@@ -80,18 +72,6 @@ CategoriesScreen.navigationOptions = (navData) => {
     ),
   };
 };
-
-interface Styles {
-  screen: ViewStyle;
-}
-
-const styles = StyleSheet.create<Styles>({
-  screen: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default CategoriesScreen;
 
